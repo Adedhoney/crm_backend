@@ -23,7 +23,9 @@
         },
         "typeRoots": ["./node_modules/@types"],
         "resolveJsonModule": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     },
 
     "exclude": ["node_modules"],
