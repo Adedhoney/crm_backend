@@ -11,12 +11,14 @@ import {
 } from 'sequelize-typescript';
 import { UserTable } from './User';
 import { ClientTable } from './Client';
+import { ReportFile, ReportFileTable } from './ReportFile';
 
 export interface Report {
     id?: number;
     reportId: string;
     userId: string;
     clientId: string;
+    contactId: string;
     title: string;
     text: string;
     createdOn?: number;
@@ -38,6 +40,9 @@ export class ReportTable extends Model implements Report {
     @PrimaryKey
     @Column({ type: DataType.STRING, allowNull: false })
     declare reportId: string;
+
+    @HasMany(() => ReportFileTable, 'reportId')
+    declare reportFiles: ReportFile[];
 
     @ForeignKey(() => UserTable)
     @Column({ type: DataType.STRING, allowNull: false })

@@ -8,12 +8,13 @@ import {
     Table,
     Unique,
     ForeignKey,
+    BelongsTo,
 } from 'sequelize-typescript';
-import { ClientTable } from './Client';
+import { Client, ClientTable } from './Client';
 import { UserTable } from './User';
 
 export interface Contact {
-    id: number;
+    id?: number;
     contactId: string;
     clientId: string;
     name: string;
@@ -45,6 +46,12 @@ export class ContactTable extends Model implements Contact {
     @ForeignKey(() => ClientTable)
     @Column({ type: DataType.STRING, allowNull: false })
     declare clientId: string;
+
+    @BelongsTo(() => ClientTable, {
+        foreignKey: 'clientId',
+    })
+    declare client: Client;
+
     @Column({ type: DataType.STRING, allowNull: false })
     declare name: string;
 

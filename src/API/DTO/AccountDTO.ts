@@ -8,7 +8,6 @@ export interface LogInDTO {
 export interface LogInResponse {
     token: string;
     user: User;
-    role: Role;
 }
 
 export interface UpdateInfoDTO {
@@ -30,11 +29,18 @@ export interface ResetPasswordDTO {
 
 export interface UserDTO {
     firstName: string;
+    gender: number;
     lastName: string;
     password: string;
+    middleName?: string;
+    DOB: Date;
+    phone: string;
+    location: string;
+    status: number;
+    userType: number;
 }
 
 export interface InviteDTO {
-    roleId: string;
+    userType: number;
     email: string;
 }

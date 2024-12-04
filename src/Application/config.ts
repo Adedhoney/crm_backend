@@ -19,6 +19,11 @@ const envs = [
     'TWILIO_AUTH_TOKEN',
     'TWILIO_PHONE',
     'RABBIT_MQ_URL',
+    'S3_ENDPOINT',
+    'S3_ACCESS_KEY',
+    'S3_SECRET_KEY',
+    'S3_REGION',
+    'S3_BUCKET',
 ];
 
 envs.forEach((value, index) => {
@@ -41,6 +46,7 @@ export default {
         pemDir: process.env.DB_PEM_DIR, // for ssl connections
     },
     JWT: { secret: process.env.JWT_SECRET },
+    QUERY_LIMIT: Number(process.env.DEFAULT_QUERY_LIMIT),
     SMTP: {
         HOST: process.env.SMTP_HOST as string,
         PORT: Number(process.env.SMTP_PORT),
@@ -53,4 +59,11 @@ export default {
         PHONE: process.env.TWILIO_PHONE as string,
     },
     RABBIT_MQ_URL: process.env.RABBIT_MQ_URL as string,
+    S3: {
+        endpoint: process.env.S3_ENDPOINT as string,
+        accessKey: process.env.S3_ACCESS_KEY as string,
+        secretKey: process.env.S3_SECRET_KEY as string,
+        region: process.env.S3_REGION as string,
+        bucket: process.env.S3_BUCKET as string,
+    },
 };

@@ -8,8 +8,10 @@ import {
     Table,
     Unique,
     ForeignKey,
+    BelongsTo,
 } from 'sequelize-typescript';
-import { UserTable } from './User';
+import { User, UserTable } from './User';
+import { ContactTable } from './Contact';
 
 export interface Client {
     id?: number;
@@ -41,6 +43,9 @@ export class ClientTable extends Model implements Client {
     @Column({ type: DataType.STRING, allowNull: false })
     declare clientId: string;
 
+    @HasMany(() => ContactTable, 'clientId')
+    declare contacts: ContactTable[];
+
     @Column({ type: DataType.STRING, allowNull: false })
     declare logoUrl: string;
 
@@ -58,10 +63,15 @@ export class ClientTable extends Model implements Client {
 
     @Column({ type: DataType.STRING, allowNull: true })
     declare bankingDetails: string;
-    
+
     @ForeignKey(() => UserTable)
     @Column({ type: DataType.STRING, allowNull: true })
     declare responsibleUserId: string;
+
+    @BelongsTo(() => UserTable, {
+        foreignKey: 'responsibleUserId',
+    })
+    declare responsibleUser: User;
 
     @Column({ type: DataType.BIGINT, allowNull: true })
     declare createdOn: number;

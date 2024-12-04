@@ -17,9 +17,13 @@ export interface ActivityLog {
 }
 
 export enum ActivityTypes {
-    SIGN_UP = 'Sign up',
+    SETUP = 'Setup',
+    INVITE = 'Invite',
+    INVITE_ACCEPTANCE = 'Invite Accepted',
     LOGIN = 'Login',
     SETTINGS = 'Settings',
+    CLIENT = 'Client',
+    CONTACT = 'Contact',
 }
 
 @Table({
@@ -32,7 +36,7 @@ export class ActivityLogTable extends Model implements ActivityLog {
     @Column
     declare id?: number;
 
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column({ type: DataType.STRING, allowNull: true })
     declare userId: string;
 
     @Column({ type: DataType.STRING, allowNull: false })

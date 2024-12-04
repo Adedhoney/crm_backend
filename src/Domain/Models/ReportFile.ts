@@ -8,6 +8,7 @@ import {
     Table,
     Unique,
     ForeignKey,
+    BelongsTo,
 } from 'sequelize-typescript';
 import { ReportTable } from './Report';
 
@@ -40,6 +41,12 @@ export class ReportFileTable extends Model implements ReportFile {
     @ForeignKey(() => ReportTable)
     @Column({ type: DataType.STRING, allowNull: false })
     declare reportId: string;
+
+    @BelongsTo(() => ReportTable, {
+        foreignKey: 'reportId',
+        onDelete: 'CASCADE',
+    })
+    declare report: Report;
 
     @Column({ type: DataType.STRING, allowNull: false })
     declare originalName: string;

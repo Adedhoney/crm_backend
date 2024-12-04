@@ -13,15 +13,15 @@ import { Gender, UserAccountStatus, UserType } from '@domain/Enums';
 export interface User {
     id?: number;
     userId: string;
+    sessionId?: string;
     email: string;
     firstName: string;
     middleName?: string;
     lastName: string;
     gender: Gender;
-    DOB?: Date;
-    mobilePhone?: string;
-    workPhone?: string;
-    location?: string;
+    DOB: Date;
+    phone: string;
+    location: string;
     status: UserAccountStatus;
     userType: UserType;
     password?: string;
@@ -46,6 +46,9 @@ export class UserTable extends Model implements User {
     @Column({ type: DataType.UUID, allowNull: false })
     declare userId: string;
 
+    @Column({ type: DataType.UUID, allowNull: true })
+    declare sessionId: string;
+
     @Column({ type: DataType.STRING, allowNull: false })
     declare email: string;
 
@@ -65,10 +68,7 @@ export class UserTable extends Model implements User {
     declare DOB: Date;
 
     @Column({ type: DataType.STRING, allowNull: true })
-    declare workPhone: string;
-
-    @Column({ type: DataType.STRING, allowNull: true })
-    declare mobilePhone: string;
+    declare phone: string;
 
     @Column({ type: DataType.STRING, allowNull: true })
     declare location: string;
@@ -80,7 +80,7 @@ export class UserTable extends Model implements User {
     declare userType: UserType;
 
     @Column({ type: DataType.STRING, allowNull: false })
-    declare password?: string;
+    declare password: string;
 
     @Column({ type: DataType.BIGINT, allowNull: true })
     declare createdOn: number;

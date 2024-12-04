@@ -1,4 +1,8 @@
 export * from './AccountRepository';
+export * from './ClientRepository';
+export * from './ContactRepository';
+export * from './OTPRepository';
+export * from './ReportRepository';
 
 export interface BasePaginationResponse {
     [key: string]: any;
