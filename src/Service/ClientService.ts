@@ -16,7 +16,7 @@ import { IActivityRepository } from '@domain/Repositories/ActivityRepository';
 export interface IClientService {
     CreateClient(
         data: ClientDTO,
-        logo: Express.Multer.File,
+        logo: Express.MulterS3.File,
         auth: User,
     ): Promise<void>;
     GetClient(clientId: string): Promise<Client>;
@@ -25,6 +25,11 @@ export interface IClientService {
     ): Promise<Promise<PaginationResponse<Client, 'clients'>>>;
     DeleteClient(clientId: string, auth: User): Promise<void>;
     UpdateClient(clientId: string, data: ClientDTO, auth: User): Promise<void>;
+    UpdateClientLogo(
+        clientId: string,
+        logo: Express.MulterS3.File,
+        auth: User,
+    ): Promise<void>;
 }
 
 export class ClientService implements IClientService {
@@ -130,6 +135,35 @@ export class ClientService implements IClientService {
             userId: auth.userId,
             activity: ActivityTypes.CLIENT,
             description: `Client of clientId ${clientId} updated by User: ${auth.firstName}  ${auth.lastName}`,
+            createdOn: date,
+        });
+    }
+
+    async UpdateClientLogo(
+        clientId: string,
+        logo: Express.MulterS3.File,
+        auth: User,
+    ): Promise<void> {
+        const client = await this.clientrepo.getClientById(clientId);
+        if (!client) {
+            throw new CustomError('Client not found', StatusCode.NOT_FOUND);
+        }
+
+        const date = getCurrentTimeStamp();
+
+        const newClient = {
+            ...client,
+            logoUrl: logo.location,
+            lastModifiedOn: date,
+            modifiedBy: auth.userId,
+        };
+        await this.clientrepo.updateClient(newClient);
+
+        // save activity
+        this.activityrepo.saveActivityLog({
+            userId: auth.userId,
+            activity: ActivityTypes.CLIENT,
+            description: `Client logo of clientId ${clientId} updated by User: ${auth.firstName}  ${auth.lastName}`,
             createdOn: date,
         });
     }

@@ -1,6 +1,19 @@
 import { ReportDTO } from '@api/DTO';
-import { User } from '@domain/Models';
-import { ReportFilters } from '@domain/Repositories';
+import { CustomError } from '@application/error';
+import {
+    generateRandomId,
+    getCurrentTimeStamp,
+    StatusCode,
+} from '@application/utilities';
+import { ActivityTypes, User, Report } from '@domain/Models';
+import {
+    IClientRepository,
+    IContactRepository,
+    IReportRepository,
+    PaginationResponse,
+    ReportFilters,
+} from '@domain/Repositories';
+import { IActivityRepository } from '@domain/Repositories/ActivityRepository';
 
 export interface IReportService {
     CreateReport(
@@ -8,20 +21,37 @@ export interface IReportService {
         images: Express.Multer.File[],
         auth: User,
     ): Promise<void>;
-    GetReportById(ReportId: string): Promise<Report>;
-    GetReports(filters: ReportFilters): Promise<Report[]>;
-    DeleteReport(ReportId: string, auth: User): Promise<void>;
-    UpdateReport(ReportId: string, data: ReportDTO, auth: User): Promise<void>;
+    GetReport(reportId: string): Promise<Report>;
+    GetReports(
+        filters: ReportFilters,
+    ): Promise<Promise<PaginationResponse<Report, 'reports'>>>;
+    DeleteReport(reportId: string, auth: User): Promise<void>;
+    UpdateReport(reportId: string, data: ReportDTO, auth: User): Promise<void>;
+    AddReportFile(
+        reportId: string,
+        image: Express.MulterS3.File,
+        auth: User,
+    ): Promise<void>;
+    DeleteReportFile(
+        reportId: string,
+        fileId: string,
+        auth: User,
+    ): Promise<void>;
 }
 
 export class ReportService implements IReportService {
     constructor(
-        private Reportrepo: IReportRepository,
+        private reportrepo: IReportRepository,
         private clientrepo: IClientRepository,
+        private contactrepo: IContactRepository,
         private activityrepo: IActivityRepository,
     ) {}
 
-    async CreateReport(data: ReportDTO, auth: User): Promise<void> {
+    async CreateReport(
+        data: ReportDTO,
+        images: Express.MulterS3.File[],
+        auth: User,
+    ): Promise<void> {
         if (data.clientId) {
             const client = await this.clientrepo.getClientById(data.clientId);
             if (!client) {
@@ -30,91 +60,163 @@ export class ReportService implements IReportService {
                 );
             }
         }
-        const ReportId = generateRandomId();
+        if (data.contactId) {
+            const contact = await this.contactrepo.getContactById(
+                data.contactId,
+            );
+            if (!contact) {
+                throw new CustomError(
+                    `Contact with contactId: ${data.contactId} not found`,
+                );
+            }
+        }
+        const reportId = generateRandomId();
 
         const date = getCurrentTimeStamp();
 
-        const Report = {
-            ReportId,
+        const report = {
+            reportId,
+            userId: auth.userId,
             clientId: data.clientId,
-            name: data.name,
-            email: data.email,
-            phone: data.phone,
-            role: data.role,
+            contactId: data.contactId,
             title: data.title,
-            responsibleUserId: data.responsibleUserId,
+            text: data.text,
             createdOn: date,
             lastModifiedOn: date,
             createdBy: auth.userId,
             modifiedBy: auth.userId,
         };
-        await this.Reportrepo.saveReport(Report);
+        const reportFiles = [];
+
+        for (let image of images) {
+            const fileId = generateRandomId();
+            const reportFile = {
+                fileId,
+                reportId,
+                originalName: image.originalname,
+                s3FileName: image.filename,
+                location: image.location,
+                createdOn: date,
+                lastModifiedOn: date,
+                createdBy: auth.userId,
+                modifiedBy: auth.userId,
+            };
+            reportFiles.push(reportFile);
+        }
+        await this.reportrepo.saveReport(report, reportFiles);
 
         // save activity
         this.activityrepo.saveActivityLog({
             userId: auth.userId,
-            activity: ActivityTypes.Report,
-            description: `New Report of ReportId ${ReportId} created by User: ${auth.firstName}  ${auth.lastName}`,
+            activity: ActivityTypes.REPORT,
+            description: `New Report of reportId ${reportId} created by User: ${auth.firstName}  ${auth.lastName}`,
             createdOn: date,
         });
     }
-    async GetReport(ReportId: string): Promise<Report> {
-        const Report = await this.Reportrepo.getReportById(ReportId);
-        return Report;
+
+    async GetReport(reportId: string): Promise<Report> {
+        const report = await this.reportrepo.getReportById(reportId);
+        return report;
     }
-    async DeleteReport(ReportId: string, auth: User): Promise<void> {
-        await this.Reportrepo.deleteReport(ReportId);
+    async DeleteReport(reportId: string, auth: User): Promise<void> {
+        await this.reportrepo.deleteReport(reportId);
 
         const date = getCurrentTimeStamp();
 
         // save activity
         this.activityrepo.saveActivityLog({
             userId: auth.userId,
-            activity: ActivityTypes.Report,
-            description: `Report of ReportId ${ReportId} deleted by User: ${auth.firstName}  ${auth.lastName}`,
+            activity: ActivityTypes.REPORT,
+            description: `Report of reportId ${reportId} deleted by User: ${auth.firstName}  ${auth.lastName}`,
             createdOn: date,
         });
     }
     async GetReports(
         filters: ReportFilters,
-    ): Promise<Promise<PaginationResponse<Report, 'Reports'>>> {
-        const Report = await this.Reportrepo.getReports(filters);
-        return Report;
+    ): Promise<Promise<PaginationResponse<Report, 'reports'>>> {
+        const report = await this.reportrepo.getReports(filters);
+        return report;
     }
     async UpdateReport(
-        ReportId: string,
+        reportId: string,
         data: ReportDTO,
         auth: User,
     ): Promise<void> {
-        const Report = await this.Reportrepo.getReportById(ReportId);
-        if (!Report) {
+        const report = await this.reportrepo.getReportById(reportId);
+        if (!report) {
             throw new CustomError('Report not found', StatusCode.NOT_FOUND);
         }
 
         const date = getCurrentTimeStamp();
 
         const newReport = {
-            ReportId,
-            clientId: data.clientId,
-            name: data.name,
-            email: data.email,
-            phone: data.phone,
-            role: data.role,
+            reportId,
+            userId: report.userId,
+            clientId: report.clientId,
+            contactId: report.contactId,
             title: data.title,
-            responsibleUserId: data.responsibleUserId,
-            createdOn: Report.createdOn,
+            text: data.text,
+            createdOn: date,
             lastModifiedOn: date,
-            createdBy: Report.createdBy,
+            createdBy: auth.userId,
             modifiedBy: auth.userId,
         };
-        await this.Reportrepo.updateReport(newReport);
+        await this.reportrepo.updateReport(newReport);
 
         // save activity
         this.activityrepo.saveActivityLog({
             userId: auth.userId,
-            activity: ActivityTypes.Report,
-            description: `Report of ReportId ${ReportId} updated by User: ${auth.firstName}  ${auth.lastName}`,
+            activity: ActivityTypes.REPORT,
+            description: `Report of reportId ${reportId} updated by User: ${auth.firstName}  ${auth.lastName}`,
             createdOn: date,
+        });
+    }
+    async AddReportFile(
+        reportId: string,
+        image: Express.MulterS3.File,
+        auth: User,
+    ): Promise<void> {
+        const report = await this.reportrepo.getReportById(reportId);
+        if (!report) {
+            throw new CustomError('Report not found', StatusCode.NOT_FOUND);
+        }
+
+        const fileId = generateRandomId();
+
+        const date = getCurrentTimeStamp();
+        const reportFile = {
+            fileId,
+            reportId,
+            originalName: image.originalname,
+            s3FileName: image.filename,
+            location: image.location,
+            createdOn: date,
+            lastModifiedOn: date,
+            createdBy: auth.userId,
+            modifiedBy: auth.userId,
+        };
+        await this.reportrepo.addReportFile(reportFile);
+        // save activity
+        this.activityrepo.saveActivityLog({
+            userId: auth.userId,
+            activity: ActivityTypes.REPORT,
+            description: `Added file to report ${reportId} by User: ${auth.firstName}  ${auth.lastName}`,
+            createdOn: date,
+        });
+    }
+    async DeleteReportFile(
+        reportId: string,
+        fileId: string,
+        auth: User,
+    ): Promise<void> {
+        await this.reportrepo.deleteReportFile(reportId, fileId);
+
+        // save activity
+        this.activityrepo.saveActivityLog({
+            userId: auth.userId,
+            activity: ActivityTypes.REPORT,
+            description: `Deleted file to report ${reportId} by User: ${auth.firstName}  ${auth.lastName}`,
+            createdOn: getCurrentTimeStamp(),
         });
     }
 }

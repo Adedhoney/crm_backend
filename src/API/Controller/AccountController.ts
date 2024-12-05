@@ -1,28 +1,82 @@
-import { IBaseRequest, RequestWithUserId } from '../Utilities/Request';
+import { User } from '@domain/Models';
+import {
+    IBaseQueryRequest,
+    IBaseRequest,
+    RequestWithAuth,
+} from '../Utilities/Request';
 import { successResponse } from '../Utilities/Response';
 import {
+    InviteDTO,
     LogInDTO,
     ResetPasswordDTO,
-    SignUpDTO,
     UpdateInfoDTO,
     UpdatePassWordDTO,
+    UserDTO,
     VerifyOtpDTO,
 } from 'API/DTO';
 import { IAccountService } from 'Service';
 import { NextFunction, Request, RequestHandler, Response } from 'express';
+import { UserFilters } from '@domain/Repositories';
 
 export class AccountController {
     constructor(private service: IAccountService) {
         this.service = service;
     }
-
-    signUp: RequestHandler = async (
-        req: IBaseRequest<SignUpDTO>,
+    setup: RequestHandler = async (
+        req: Request,
         res: Response,
         next: NextFunction,
     ) => {
         try {
-            await this.service.SignUp(req.body.data);
+            await this.service.StartUp(req.params.email);
+
+            return successResponse(
+                res,
+                `Invite email sent to ${req.params.email}`,
+            );
+        } catch (err) {
+            next(err);
+        }
+    };
+
+    sendInvite: RequestHandler = async (
+        req: IBaseRequest<InviteDTO>,
+        res: Response,
+        next: NextFunction,
+    ) => {
+        try {
+            await this.service.SendInvite(req.body.data, req.auth as User);
+
+            return successResponse(res, 'Successful');
+        } catch (err) {
+            next(err);
+        }
+    };
+
+    resendInvite: RequestHandler = async (
+        req: RequestWithAuth,
+        res: Response,
+        next: NextFunction,
+    ) => {
+        try {
+            await this.service.ResendInvite(
+                req.params.inviteId,
+                req.auth as User,
+            );
+
+            return successResponse(res, 'Successful');
+        } catch (err) {
+            next(err);
+        }
+    };
+
+    activateUser: RequestHandler = async (
+        req: IBaseRequest<UserDTO>,
+        res: Response,
+        next: NextFunction,
+    ) => {
+        try {
+            await this.service.ActivateUser(req.body.data, req.params.inviteId);
 
             return successResponse(res, 'Successful');
         } catch (err) {
@@ -44,13 +98,47 @@ export class AccountController {
         }
     };
 
-    getUser: RequestHandler = async (
+    getInvite: RequestHandler = async (
         req: Request,
         res: Response,
         next: NextFunction,
     ) => {
         try {
-            const user = await this.service.GetUser(res.locals.authData.userId);
+            const invite = await this.service.GetInvite(req.params.inviteId);
+
+            return successResponse(res, 'Successful', { invite });
+        } catch (err) {
+            next(err);
+        }
+    };
+
+    getInvites: RequestHandler = async (
+        req: IBaseQueryRequest<UserFilters>,
+        res: Response,
+        next: NextFunction,
+    ) => {
+        try {
+            const { search, pageLimit, pageNumber, sort } = req.query;
+            const invites = await this.service.GetInvites({
+                search,
+                pageLimit,
+                pageNumber,
+                sort,
+            });
+
+            return successResponse(res, 'Successful', { ...invites });
+        } catch (err) {
+            next(err);
+        }
+    };
+
+    getUser: RequestHandler = async (
+        req: RequestWithAuth,
+        res: Response,
+        next: NextFunction,
+    ) => {
+        try {
+            const user = await this.service.GetUser(req.auth as User);
 
             return successResponse(res, 'Successful', { user });
         } catch (err) {
@@ -64,9 +152,47 @@ export class AccountController {
         next: NextFunction,
     ) => {
         try {
-            const user = await this.service.GetUser(req.params.userId);
+            const user = await this.service.GetUserById(req.params.userId);
 
             return successResponse(res, 'Successful', { user });
+        } catch (err) {
+            next(err);
+        }
+    };
+
+    getUsers: RequestHandler = async (
+        req: IBaseQueryRequest<UserFilters>,
+        res: Response,
+        next: NextFunction,
+    ) => {
+        try {
+            const { search, pageLimit, pageNumber, sort, userType } = req.query;
+            const admins = await this.service.GetUsers({
+                search,
+                pageLimit,
+                pageNumber,
+                sort,
+                userType,
+            });
+
+            return successResponse(res, 'Successful', { ...admins });
+        } catch (err) {
+            next(err);
+        }
+    };
+
+    deactivateUser: RequestHandler = async (
+        req: RequestWithAuth,
+        res: Response,
+        next: NextFunction,
+    ) => {
+        try {
+            await this.service.DeactivateUser(
+                req.params.adminId,
+                req.auth as User,
+            );
+
+            return successResponse(res, 'Successful');
         } catch (err) {
             next(err);
         }
@@ -78,10 +204,7 @@ export class AccountController {
         next: NextFunction,
     ) => {
         try {
-            await this.service.UpdateInfo(
-                req.body.data,
-                res.locals.authData.userId,
-            );
+            await this.service.UpdateInfo(req.body.data, req.auth as User);
 
             return successResponse(res, 'Successful');
         } catch (err) {
@@ -95,24 +218,7 @@ export class AccountController {
         next: NextFunction,
     ) => {
         try {
-            await this.service.UpdatePassword(
-                req.body.data,
-                res.locals.authData.userId,
-            );
-
-            return successResponse(res, 'Successful');
-        } catch (err) {
-            next(err);
-        }
-    };
-
-    deleteUser: RequestHandler = async (
-        _: Request,
-        res: Response,
-        next: NextFunction,
-    ) => {
-        try {
-            await this.service.DeleteUser(res.locals.authData.userId);
+            await this.service.UpdatePassword(req.body.data, req.auth as User);
 
             return successResponse(res, 'Successful');
         } catch (err) {

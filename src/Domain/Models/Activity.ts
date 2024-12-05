@@ -24,6 +24,7 @@ export enum ActivityTypes {
     SETTINGS = 'Settings',
     CLIENT = 'Client',
     CONTACT = 'Contact',
+    REPORT = 'Report',
 }
 
 @Table({

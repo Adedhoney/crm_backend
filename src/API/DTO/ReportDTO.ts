@@ -1,5 +1,6 @@
 export interface ReportDTO {
-    clientId: string;
+    clientId?: string;
+    contactId?: string;
     title: string;
     text: string;
 }

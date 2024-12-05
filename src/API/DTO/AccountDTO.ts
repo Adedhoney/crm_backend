@@ -36,8 +36,6 @@ export interface UserDTO {
     DOB: Date;
     phone: string;
     location: string;
-    status: number;
-    userType: number;
 }
 
 export interface InviteDTO {

@@ -12,13 +12,14 @@ import {
 import { UserTable } from './User';
 import { ClientTable } from './Client';
 import { ReportFile, ReportFileTable } from './ReportFile';
+import { ContactTable } from './Contact';
 
 export interface Report {
     id?: number;
     reportId: string;
     userId: string;
-    clientId: string;
-    contactId: string;
+    clientId?: string;
+    contactId?: string;
     title: string;
     text: string;
     createdOn?: number;
@@ -51,6 +52,10 @@ export class ReportTable extends Model implements Report {
     @ForeignKey(() => ClientTable)
     @Column({ type: DataType.STRING, allowNull: true })
     declare clientId: string;
+
+    @ForeignKey(() => ContactTable)
+    @Column({ type: DataType.STRING, allowNull: true })
+    declare contactId: string;
 
     @Column({ type: DataType.STRING, allowNull: false })
     declare title: string;
