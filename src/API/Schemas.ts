@@ -5,13 +5,22 @@ export const UserSchema = Joi.object({
     gender: Joi.number().required(),
     lastName: Joi.string().required(),
     password: Joi.string().required(),
-    middleName: Joi.string().required(),
-    DOB: Joi.date().required(),
+    middleName: Joi.string().optional(),
+    DOB: Joi.date().optional(),
     phone: Joi.string().required(),
-    location: Joi.string().required(),
+    location: Joi.string().optional(),
+});
+export const UserUpdateSchema = Joi.object({
+    firstName: Joi.string().required(),
+    gender: Joi.number().required(),
+    lastName: Joi.string().required(),
+    middleName: Joi.string().optional(),
+    DOB: Joi.date().optional(),
+    phone: Joi.string().required(),
+    location: Joi.string().optional(),
 });
 export const InviteSchema = Joi.object({
-    UserType: Joi.string().required(),
+    userType: Joi.number().required(),
     email: Joi.string().required(),
 });
 

@@ -41,6 +41,7 @@ export interface IAccountService {
     SendInvite(data: InviteDTO, auth: User): Promise<void>;
     DeactivateUser(userId: string, auth: User): Promise<void>;
     ResendInvite(inviteId: string, auth: User): Promise<void>;
+    MakeUserAdmin(userId: string, auth: User): Promise<void>;
     ActivateUser(data: UserDTO, inviteId: string): Promise<void>;
     GetInvite(inviteId: string): Promise<Invite>;
     GetInvites(
@@ -94,6 +95,7 @@ export class AccountService implements IAccountService {
             createdOn: date,
             lastModifiedOn: date,
         };
+        await this.accountrepo.saveInvite(invite);
         await this.accountnotif.sendInvite(email, inviteId);
 
         // save activity
@@ -311,6 +313,19 @@ export class AccountService implements IAccountService {
     }
 
     async DeactivateUser(userId: string, auth: User): Promise<void> {
+        const user = await this.accountrepo.getUserById(userId);
+        if (user && user.userType === UserType.SUPERADMIN) {
+            throw new CustomError(
+                'Cannot deactivate super admin',
+                StatusCode.BAD_REQUEST,
+            );
+        }
+        if (userId === auth.userId) {
+            throw new CustomError(
+                'Contact Administrator to deactivate your account',
+                StatusCode.BAD_REQUEST,
+            );
+        }
         const date = getCurrentTimeStamp();
 
         await this.accountrepo.updateUserStatus(

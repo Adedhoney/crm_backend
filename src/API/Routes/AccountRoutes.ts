@@ -7,6 +7,7 @@ import {
     UpdateInfoSchema,
     UpdatePassWordSchema,
     UserSchema,
+    UserUpdateSchema,
     VerifyOtpSchema,
 } from 'API/Schemas';
 import { RequestHandler, Router } from 'express';
@@ -32,7 +33,7 @@ export default (acctctr: AccountController, auth: RequestHandler) => {
     router.get('/invites/:inviteId', acctctr.getInvite);
     router.get('/invites', auth, acctctr.getInvites);
 
-    router.put('/', auth, Validation(UpdateInfoSchema), acctctr.updateInfo);
+    router.put('/', auth, Validation(UserUpdateSchema), acctctr.updateInfo);
     // router.put(
     //     '/:userId/role',
     //     auth,
@@ -45,6 +46,8 @@ export default (acctctr: AccountController, auth: RequestHandler) => {
         Validation(UpdatePassWordSchema),
         acctctr.updatePassword,
     );
+
+    router.put('/users/:userId/admin', auth, acctctr.updatePassword);
 
     router.get('/', auth, acctctr.getUser);
     // router.get('/dashboard', auth, acctctr.dashboard);

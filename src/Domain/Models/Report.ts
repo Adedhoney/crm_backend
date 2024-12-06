@@ -39,22 +39,22 @@ export class ReportTable extends Model implements Report {
     declare id: number;
 
     @PrimaryKey
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column({ type: DataType.UUID, allowNull: false })
     declare reportId: string;
 
     @HasMany(() => ReportFileTable, 'reportId')
     declare reportFiles: ReportFile[];
 
     @ForeignKey(() => UserTable)
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column({ type: DataType.UUID, allowNull: false })
     declare userId: string;
 
     @ForeignKey(() => ClientTable)
-    @Column({ type: DataType.STRING, allowNull: true })
+    @Column({ type: DataType.UUID, allowNull: true })
     declare clientId: string;
 
     @ForeignKey(() => ContactTable)
-    @Column({ type: DataType.STRING, allowNull: true })
+    @Column({ type: DataType.UUID, allowNull: true })
     declare contactId: string;
 
     @Column({ type: DataType.STRING, allowNull: false })

@@ -1,4 +1,5 @@
 export * from './AccountRepository';
+export * from './ActivityRepository';
 export * from './ClientRepository';
 export * from './ContactRepository';
 export * from './OTPRepository';

@@ -10,7 +10,7 @@ import {
     ForeignKey,
     BelongsTo,
 } from 'sequelize-typescript';
-import { ReportTable } from './Report';
+import { Report, ReportTable } from './Report';
 
 export interface ReportFile {
     id?: number;
@@ -36,11 +36,11 @@ export class ReportFileTable extends Model implements ReportFile {
     declare id: number;
 
     @PrimaryKey
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column({ type: DataType.UUID, allowNull: false })
     declare fileId: string;
 
     @ForeignKey(() => ReportTable)
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column({ type: DataType.UUID, allowNull: false })
     declare reportId: string;
 
     @BelongsTo(() => ReportTable, {

@@ -40,7 +40,7 @@ export class ClientTable extends Model implements Client {
     declare id: number;
 
     @PrimaryKey
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column({ type: DataType.UUID, allowNull: false })
     declare clientId: string;
 
     @HasMany(() => ContactTable, 'clientId')
@@ -65,13 +65,11 @@ export class ClientTable extends Model implements Client {
     declare bankingDetails: string;
 
     @ForeignKey(() => UserTable)
-    @Column({ type: DataType.STRING, allowNull: true })
+    @Column({ type: DataType.UUID, allowNull: true })
     declare responsibleUserId: string;
 
-    @BelongsTo(() => UserTable, {
-        foreignKey: 'responsibleUserId',
-    })
-    declare responsibleUser: User;
+    @BelongsTo(() => UserTable, 'responsibleUserId')
+    declare responsibleUser: UserTable;
 
     @Column({ type: DataType.BIGINT, allowNull: true })
     declare createdOn: number;

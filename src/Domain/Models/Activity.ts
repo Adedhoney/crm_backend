@@ -37,7 +37,7 @@ export class ActivityLogTable extends Model implements ActivityLog {
     @Column
     declare id?: number;
 
-    @Column({ type: DataType.STRING, allowNull: true })
+    @Column({ type: DataType.UUID, allowNull: true })
     declare userId: string;
 
     @Column({ type: DataType.STRING, allowNull: false })

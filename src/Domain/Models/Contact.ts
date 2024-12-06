@@ -40,16 +40,14 @@ export class ContactTable extends Model implements Contact {
     declare id: number;
 
     @PrimaryKey
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column({ type: DataType.UUID, allowNull: false })
     declare contactId: string;
 
     @ForeignKey(() => ClientTable)
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column({ type: DataType.UUID, allowNull: true })
     declare clientId: string;
 
-    @BelongsTo(() => ClientTable, {
-        foreignKey: 'clientId',
-    })
+    @BelongsTo(() => ClientTable, 'clientId')
     declare client: Client;
 
     @Column({ type: DataType.STRING, allowNull: false })
@@ -68,7 +66,7 @@ export class ContactTable extends Model implements Contact {
     declare title: string;
 
     @ForeignKey(() => UserTable)
-    @Column({ type: DataType.STRING, allowNull: true })
+    @Column({ type: DataType.UUID, allowNull: true })
     declare responsibleUserId: string;
 
     @Column({ type: DataType.BIGINT, allowNull: true })

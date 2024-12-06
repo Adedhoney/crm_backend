@@ -25,7 +25,7 @@ export interface Invite {
 }
 
 @Table({
-    tableName: 'admin-invites',
+    tableName: 'invites',
     timestamps: false, // If you want to manage createdAt and updatedAt timestamps
 })
 export class InviteTable extends Model implements Invite {

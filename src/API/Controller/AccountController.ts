@@ -84,6 +84,23 @@ export class AccountController {
         }
     };
 
+    makeUserAdmin: RequestHandler = async (
+        req: RequestWithAuth,
+        res: Response,
+        next: NextFunction,
+    ) => {
+        try {
+            await this.service.MakeUserAdmin(
+                req.params.userId,
+                req.auth as User,
+            );
+
+            return successResponse(res, 'Successful');
+        } catch (err) {
+            next(err);
+        }
+    };
+
     logIn: RequestHandler = async (
         req: IBaseRequest<LogInDTO>,
         res: Response,
@@ -188,7 +205,7 @@ export class AccountController {
     ) => {
         try {
             await this.service.DeactivateUser(
-                req.params.adminId,
+                req.params.userId,
                 req.auth as User,
             );
 

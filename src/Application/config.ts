@@ -13,7 +13,7 @@ const envs = [
     'JWT_SECRET',
     'SMTP_HOST',
     'SMTP_PORT',
-    'SMTP_USERNAME',
+    'SMTP_EMAIL',
     'SMTP_PASSWORD',
     'TWILIO_SID',
     'TWILIO_AUTH_TOKEN',
