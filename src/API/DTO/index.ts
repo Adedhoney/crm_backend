@@ -1,4 +1,4 @@
 export * from './AccountDTO';
 export * from './ClientDTO';
-export * from './CreatorDTO';
+export * from './ContactDTO';
 export * from './ReportDTO';

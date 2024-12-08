@@ -8,6 +8,7 @@ import {
 import { ActivityTypes, Client, User } from '@domain/Models';
 import {
     ClientFilters,
+    IAccountRepository,
     IClientRepository,
     PaginationResponse,
 } from '@domain/Repositories';
@@ -35,6 +36,7 @@ export interface IClientService {
 export class ClientService implements IClientService {
     constructor(
         private clientrepo: IClientRepository,
+        private accountrepo: IAccountRepository,
         private activityrepo: IActivityRepository,
     ) {}
 
@@ -50,6 +52,17 @@ export class ClientService implements IClientService {
                 StatusCode.BAD_REQUEST,
             );
         }
+        if (data.responsibleUserId) {
+            const user = await this.accountrepo.getUserById(
+                data.responsibleUserId,
+            );
+            if (!user) {
+                throw new CustomError(
+                    'Responsible User not found',
+                    StatusCode.BAD_REQUEST,
+                );
+            }
+        }
 
         const clientId = generateRandomId();
 
@@ -59,11 +72,11 @@ export class ClientService implements IClientService {
             clientId,
             name: data.name,
             industry: data.industry,
-            logoUrl: logo.location,
+            logoUrl: logo?.location,
             email: data.email,
             phone: data.phone,
             bankingDetails: data.bankingDetails,
-            responsibleUserId: data.responsibleUserId,
+            responsibleUserId: data.responsibleUserId || auth.userId,
             createdOn: date,
             lastModifiedOn: date,
             createdBy: auth.userId,
@@ -110,6 +123,18 @@ export class ClientService implements IClientService {
         const client = await this.clientrepo.getClientById(clientId);
         if (!client) {
             throw new CustomError('Client not found', StatusCode.NOT_FOUND);
+        }
+
+        if (data.responsibleUserId) {
+            const user = await this.accountrepo.getUserById(
+                data.responsibleUserId,
+            );
+            if (!user) {
+                throw new CustomError(
+                    'Responsible User not found',
+                    StatusCode.BAD_REQUEST,
+                );
+            }
         }
 
         const date = getCurrentTimeStamp();

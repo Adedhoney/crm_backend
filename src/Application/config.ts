@@ -19,6 +19,7 @@ const envs = [
     'TWILIO_AUTH_TOKEN',
     'TWILIO_PHONE',
     'RABBIT_MQ_URL',
+    'MAX_FILE_SIZE',
     'S3_ENDPOINT',
     'S3_ACCESS_KEY',
     'S3_SECRET_KEY',
@@ -47,6 +48,7 @@ export default {
     },
     JWT: { secret: process.env.JWT_SECRET },
     QUERY_LIMIT: Number(process.env.DEFAULT_QUERY_LIMIT),
+    MAX_FILE_SIZE: Number(process.env.MAX_FILE_SIZE),
     SMTP: {
         HOST: process.env.SMTP_HOST as string,
         PORT: Number(process.env.SMTP_PORT),

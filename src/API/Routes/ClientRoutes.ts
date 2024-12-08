@@ -10,8 +10,8 @@ export default (acctctr: ClientController, auth: RequestHandler) => {
     router.post(
         '/',
         auth,
-        Validation(ClientSchema),
         UploadFile.single('file'),
+        Validation(ClientSchema),
         acctctr.createClient,
     );
     router.get('/', auth, acctctr.getClients);

@@ -56,7 +56,7 @@ export class ContactService implements IContactService {
             phone: data.phone,
             role: data.role,
             title: data.title,
-            responsibleUserId: data.responsibleUserId,
+            responsibleUserId: data.responsibleUserId || auth.userId,
             createdOn: date,
             lastModifiedOn: date,
             createdBy: auth.userId,

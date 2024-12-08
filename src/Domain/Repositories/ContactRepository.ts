@@ -40,8 +40,20 @@ export class ContactRepository implements IContactRepository {
         const contact = await this.db.contact.findOne({
             where: { contactId },
             include: [
-                { model: this.db.user, as: 'responsibleUser' },
-                { model: this.db.client },
+                {
+                    model: this.db.user,
+                    as: 'responsibleUser',
+                    attributes: [
+                        'email',
+                        'firstName',
+                        'middleName',
+                        'lastName',
+                    ],
+                },
+                {
+                    model: this.db.client,
+                    attributes: ['name', 'industry', 'email', 'phone'],
+                },
             ],
         });
         return contact?.dataValues as Contact;

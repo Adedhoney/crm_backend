@@ -46,7 +46,7 @@ export class ClientTable extends Model implements Client {
     @HasMany(() => ContactTable, 'clientId')
     declare contacts: ContactTable[];
 
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column({ type: DataType.STRING, allowNull: true })
     declare logoUrl: string;
 
     @Column({ type: DataType.STRING, allowNull: false })

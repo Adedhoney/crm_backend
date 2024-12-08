@@ -59,7 +59,7 @@ export class ReportController {
         next: NextFunction,
     ) => {
         try {
-            const report = await this.service.GetReport(req.params.ReportId);
+            const report = await this.service.GetReport(req.params.reportId);
 
             return successResponse(res, 'Successful', { report });
         } catch (err) {

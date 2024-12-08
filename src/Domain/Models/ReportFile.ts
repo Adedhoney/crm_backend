@@ -17,7 +17,6 @@ export interface ReportFile {
     fileId: string;
     reportId: string;
     originalName: string;
-    s3FileName: string;
     location: string;
     createdOn?: number;
     lastModifiedOn?: number;
@@ -52,10 +51,7 @@ export class ReportFileTable extends Model implements ReportFile {
     @Column({ type: DataType.STRING, allowNull: false })
     declare originalName: string;
 
-    @Column({ type: DataType.TEXT, allowNull: false })
-    declare s3FileName: string;
-
-    @Column({ type: DataType.TEXT, allowNull: false })
+    @Column({ type: DataType.STRING, allowNull: false })
     declare location: string;
 
     @Column({ type: DataType.BIGINT, allowNull: true })

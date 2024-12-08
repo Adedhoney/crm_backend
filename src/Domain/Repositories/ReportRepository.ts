@@ -19,7 +19,7 @@ export interface IReportRepository {
     updateReport(report: Report): Promise<void>;
 }
 
-type ReportSort = 'name-asc' | 'name-desc' | 'date-asc' | 'date-desc';
+type ReportSort = 'title-asc' | 'title-desc' | 'date-asc' | 'date-desc';
 
 export interface ReportFilters {
     search?: string;
@@ -58,7 +58,7 @@ export class ReportRepository implements IReportRepository {
     }
 
     async addReportFile(file: ReportFile): Promise<void> {
-        await this.db.reportFile.create({ ...[file] });
+        await this.db.reportFile.create({ ...file });
     }
 
     async deleteReport(reportId: string): Promise<void> {
@@ -85,11 +85,15 @@ export class ReportRepository implements IReportRepository {
         const page = Number(pageNumber) ? Number(pageNumber) : 1;
         const offset = (page - 1) * limit;
 
-        let sorting: OrderItem = ['name', 'ASC'];
-        if (sort === 'name-desc') {
-            sorting = ['name', 'DESC'];
-        } else if (sort === 'name-asc') {
-            sorting = ['name', 'ASC'];
+        let sorting: OrderItem = ['createdOn', 'DESC'];
+        if (sort === 'title-desc') {
+            sorting = ['title', 'DESC'];
+        } else if (sort === 'title-asc') {
+            sorting = ['title', 'ASC'];
+        } else if (sort === 'date-desc') {
+            sorting = ['createdOn', 'DESC'];
+        } else if (sort === 'date-asc') {
+            sorting = ['createdOn', 'ASC'];
         }
 
         const reports = await this.db.report.findAll({

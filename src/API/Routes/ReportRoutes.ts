@@ -10,8 +10,8 @@ export default (acctctr: ReportController, auth: RequestHandler) => {
     router.post(
         '/',
         auth,
-        Validation(ReportSchema),
         UploadFile.array('files'),
+        Validation(ReportSchema),
         acctctr.createReport,
     );
     router.get('/', auth, acctctr.getReports);
@@ -23,7 +23,7 @@ export default (acctctr: ReportController, auth: RequestHandler) => {
         Validation(ReportSchema),
         acctctr.updateReport,
     );
-    router.put(
+    router.post(
         '/:reportId/file',
         auth,
         UploadFile.single('file'),

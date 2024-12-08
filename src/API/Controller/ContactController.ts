@@ -87,7 +87,7 @@ export class ContactController {
     ) => {
         try {
             await this.service.UpdateContact(
-                req.params.ContactId,
+                req.params.contactId,
                 req.body.data,
                 req.auth as User,
             );

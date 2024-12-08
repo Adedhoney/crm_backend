@@ -6,7 +6,11 @@ import { ObjectSchema } from 'joi';
 export const Validation =
     (schema: ObjectSchema) =>
     async (req: Request, res: Response, next: NextFunction) => {
-        const data = req.body.data;
+        let data = req.body.data;
+        if (typeof req.body.data === 'string') {
+            data = JSON.parse(req.body.data);
+            req.body.data = data;
+        }
         if (!data) {
             return next(
                 new CustomError('Invalid request data', StatusCode.BAD_REQUEST),

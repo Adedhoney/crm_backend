@@ -38,7 +38,18 @@ export class ClientRepository implements IClientRepository {
     async getClientById(clientId: string): Promise<Client> {
         const client = await this.db.client.findOne({
             where: { clientId },
-            include: [{ model: this.db.user, as: 'responsibleUser' }],
+            include: [
+                {
+                    model: this.db.user,
+                    as: 'responsibleUser',
+                    attributes: [
+                        'email',
+                        'firstName',
+                        'middleName',
+                        'lastName',
+                    ],
+                },
+            ],
         });
         return client?.dataValues as Client;
     }

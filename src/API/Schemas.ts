@@ -47,20 +47,20 @@ export const ResetPasswordSchema = Joi.object({
 export const ClientSchema = Joi.object({
     name: Joi.string().required(),
     industry: Joi.string().required(),
-    email: Joi.string().required(),
-    phone: Joi.string().required(),
-    bankingDetails: Joi.string().required(),
-    responsibleUserId: Joi.date().required(),
+    email: Joi.string().optional(),
+    phone: Joi.string().optional(),
+    bankingDetails: Joi.string().optional(),
+    responsibleUserId: Joi.string().optional(),
 });
 
 export const ContactSchema = Joi.object({
-    clientId: Joi.string().required(),
+    clientId: Joi.string().optional(),
     name: Joi.string().required(),
-    email: Joi.string().required(),
-    phone: Joi.string().required(),
-    role: Joi.string().required(),
-    title: Joi.date().required(),
-    responsibleUserId: Joi.date().required(),
+    email: Joi.string().optional(),
+    phone: Joi.string().optional(),
+    role: Joi.string().optional(),
+    title: Joi.string().optional(),
+    responsibleUserId: Joi.string().optional(),
 });
 
 export const ReportSchema = Joi.object({

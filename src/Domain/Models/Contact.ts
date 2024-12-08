@@ -69,6 +69,9 @@ export class ContactTable extends Model implements Contact {
     @Column({ type: DataType.UUID, allowNull: true })
     declare responsibleUserId: string;
 
+    @BelongsTo(() => UserTable, 'responsibleUserId')
+    declare responsibleUser: UserTable;
+
     @Column({ type: DataType.BIGINT, allowNull: true })
     declare createdOn: number;
 

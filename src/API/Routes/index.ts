@@ -44,7 +44,7 @@ const acctctr = new AccountController(
     new AccountService(acctrepo, otprepo, acctNotification, activityrepo),
 );
 const clientctr = new ClientController(
-    new ClientService(clientrepo, activityrepo),
+    new ClientService(clientrepo, acctrepo, activityrepo),
 );
 const contactctr = new ContactController(
     new ContactService(contactrepo, clientrepo, activityrepo),
