@@ -110,7 +110,7 @@ export class AccountNotification
     </p>
     <p>This invite only lasts for 7 days.</p>
     <p>Your invite Id is ${inviteId}</p>
-    <a href="admin.samphes.com/${inviteId}" class="accept-button">Accept invitation</a>
+    <a href="http://localhost:5173/auth/accept-invite/${inviteId}" class="accept-button">Accept invitation</a>
   </div>
   <div class="email-footer">
     <p>

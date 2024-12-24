@@ -11,6 +11,7 @@ import {
     ResetPasswordDTO,
     UpdateInfoDTO,
     UpdatePassWordDTO,
+    UpdateUserDTO,
     UserDTO,
     VerifyOtpDTO,
 } from 'API/DTO';
@@ -216,7 +217,7 @@ export class AccountController {
     };
 
     updateInfo: RequestHandler = async (
-        req: IBaseRequest<UpdateInfoDTO>,
+        req: IBaseRequest<UpdateUserDTO>,
         res: Response,
         next: NextFunction,
     ) => {

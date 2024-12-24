@@ -26,12 +26,16 @@ export interface ResetPasswordDTO {
     otpToken: string;
     newPassword: string;
 }
-
 export interface UserDTO {
     firstName: string;
     gender: number;
     lastName: string;
     password: string;
+}
+export interface UpdateUserDTO {
+    firstName: string;
+    gender: number;
+    lastName: string;
     middleName?: string;
     DOB: Date;
     phone: string;

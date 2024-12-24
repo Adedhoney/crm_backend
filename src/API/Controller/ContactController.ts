@@ -43,7 +43,7 @@ export class ContactController {
                 sort,
             });
 
-            return successResponse(res, 'Successful', { contacts });
+            return successResponse(res, 'Successful', { ...contacts });
         } catch (err) {
             next(err);
         }

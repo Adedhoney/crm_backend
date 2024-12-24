@@ -4,7 +4,6 @@ import {
     InviteSchema,
     LogInSchema,
     ResetPasswordSchema,
-    UpdateInfoSchema,
     UpdatePassWordSchema,
     UserSchema,
     UserUpdateSchema,

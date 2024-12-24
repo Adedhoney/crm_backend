@@ -5,6 +5,7 @@ import {
     ResetPasswordDTO,
     UpdateInfoDTO,
     UpdatePassWordDTO,
+    UpdateUserDTO,
     UserDTO,
     VerifyOtpDTO,
 } from '@api/DTO';
@@ -51,7 +52,7 @@ export interface IAccountService {
     GetUser(authUser: User): Promise<User>;
     GetUserById(userId: string): Promise<User>;
     GetUsers(filter: UserFilters): Promise<PaginationResponse<User, 'users'>>;
-    UpdateInfo(data: UpdateInfoDTO, auth: User): Promise<void>;
+    UpdateInfo(data: UpdateUserDTO, auth: User): Promise<void>;
     // UpdatePicture(data: UpdateInfoDTO, auth: User): Promise<void>;
     UpdatePassword(data: UpdatePassWordDTO, auth: User): Promise<void>;
     ForgotPassword(email: string): Promise<void>;
@@ -220,12 +221,8 @@ export class AccountService implements IAccountService {
             userId,
             email: invite.email,
             firstName: data.firstName,
-            middleName: data.middleName,
             lastName: data.lastName,
             gender: data.gender,
-            DOB: data.DOB,
-            phone: data.phone,
-            location: data.location,
             status: UserAccountStatus.ACTIVE,
             userType: invite.userType,
             password,
@@ -287,6 +284,9 @@ export class AccountService implements IAccountService {
 
     async GetInvite(inviteId: string): Promise<Invite> {
         const invite = await this.accountrepo.getInvite(inviteId);
+        if (!invite) {
+            throw new CustomError('Invite not found', StatusCode.BAD_REQUEST);
+        }
         if (invite.status === InviteStatus.ACCEPTED) {
             throw new CustomError(
                 'Invite has already been accepted',
@@ -354,7 +354,7 @@ export class AccountService implements IAccountService {
         return users;
     }
 
-    async UpdateInfo(data: UserDTO, auth: User): Promise<void> {
+    async UpdateInfo(data: UpdateUserDTO, auth: User): Promise<void> {
         const user = auth;
         if (!user) {
             throw new CustomError('User not found', StatusCode.UNAUTHORIZED);

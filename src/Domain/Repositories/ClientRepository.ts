@@ -42,12 +42,17 @@ export class ClientRepository implements IClientRepository {
                 {
                     model: this.db.user,
                     as: 'responsibleUser',
-                    attributes: [
-                        'email',
-                        'firstName',
-                        'middleName',
-                        'lastName',
-                    ],
+                    attributes: ['firstName', 'lastName'],
+                },
+                {
+                    model: this.db.user,
+                    as: 'creator',
+                    attributes: ['firstName', 'lastName'],
+                },
+                {
+                    model: this.db.user,
+                    as: 'modifier',
+                    attributes: ['firstName', 'lastName'],
                 },
             ],
         });
@@ -94,6 +99,10 @@ export class ClientRepository implements IClientRepository {
             sorting = ['name', 'DESC'];
         } else if (sort === 'name-asc') {
             sorting = ['name', 'ASC'];
+        } else if (sort === 'date-asc') {
+            sorting = ['createdOn', 'DESC'];
+        } else if (sort === 'date-desc') {
+            sorting = ['createdOn', 'ASC'];
         }
 
         const clients = await this.db.client.findAll({
@@ -104,11 +113,28 @@ export class ClientRepository implements IClientRepository {
                 }),
                 ...(responsibleUserId && { responsibleUserId }),
             },
+            include: [
+                {
+                    model: this.db.user,
+                    as: 'responsibleUser',
+                    attributes: ['firstName', 'lastName'],
+                },
+                {
+                    model: this.db.user,
+                    as: 'creator',
+                    attributes: ['firstName', 'lastName'],
+                },
+                {
+                    model: this.db.user,
+                    as: 'modifier',
+                    attributes: ['firstName', 'lastName'],
+                },
+            ],
             order: [sorting],
             limit,
             offset,
         });
-        const totalData = await this.db.invite.count({
+        const totalData = await this.db.client.count({
             where: {
                 ...(search && {
                     email: { [Op.like]: search },

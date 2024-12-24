@@ -38,16 +38,18 @@ export class ClientController {
         res: Response,
         next: NextFunction,
     ) => {
-        const { search, pageLimit, pageNumber, sort } = req.query;
+        const { search, responsibleUserId, pageLimit, pageNumber, sort } =
+            req.query;
         try {
             const clients = await this.service.GetClients({
                 search,
+                responsibleUserId,
                 pageLimit,
                 pageNumber,
                 sort,
             });
 
-            return successResponse(res, 'Successful', { clients });
+            return successResponse(res, 'Successful', { ...clients });
         } catch (err) {
             next(err);
         }

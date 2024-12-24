@@ -54,6 +54,16 @@ export class ContactRepository implements IContactRepository {
                     model: this.db.client,
                     attributes: ['name', 'industry', 'email', 'phone'],
                 },
+                {
+                    model: this.db.user,
+                    as: 'creator',
+                    attributes: ['firstName', 'lastName'],
+                },
+                {
+                    model: this.db.user,
+                    as: 'modifier',
+                    attributes: ['firstName', 'lastName'],
+                },
             ],
         });
         return contact?.dataValues as Contact;
@@ -117,6 +127,28 @@ export class ContactRepository implements IContactRepository {
                 ...(responsibleUserId && { responsibleUserId }),
                 ...(clientId && { clientId }),
             },
+
+            include: [
+                {
+                    model: this.db.user,
+                    as: 'responsibleUser',
+                    attributes: ['firstName', 'lastName'],
+                },
+                {
+                    model: this.db.client,
+                    attributes: ['name', 'industry', 'email', 'phone'],
+                },
+                {
+                    model: this.db.user,
+                    as: 'creator',
+                    attributes: ['firstName', 'lastName'],
+                },
+                {
+                    model: this.db.user,
+                    as: 'modifier',
+                    attributes: ['firstName', 'lastName'],
+                },
+            ],
             order: [sorting],
             limit,
             offset,

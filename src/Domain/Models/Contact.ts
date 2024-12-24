@@ -78,9 +78,17 @@ export class ContactTable extends Model implements Contact {
     @Column({ type: DataType.BIGINT, allowNull: true })
     declare lastModifiedOn: number;
 
+    @ForeignKey(() => UserTable)
     @Column({ type: DataType.STRING, allowNull: true })
     declare createdBy: string;
 
+    @BelongsTo(() => UserTable, 'createdBy')
+    declare creator: UserTable;
+
+    @ForeignKey(() => UserTable)
     @Column({ type: DataType.STRING, allowNull: true })
     declare modifiedBy: string;
+
+    @BelongsTo(() => UserTable, 'modifiedBy')
+    declare modifier: UserTable;
 }

@@ -3,6 +3,7 @@ export interface ClientDTO {
     industry: string;
     email: string;
     phone: string;
+    type: number;
     bankingDetails: string;
     responsibleUserId: string;
 }

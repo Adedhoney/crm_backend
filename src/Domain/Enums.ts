@@ -3,6 +3,12 @@ export enum Gender {
     Female,
 }
 
+export enum ClientType {
+    Prospect,
+    Client,
+    Other,
+}
+
 export enum UserAccountStatus {
     ACTIVE = 0,
     DEACTIVATED = 1,
@@ -18,7 +24,6 @@ export enum InviteStatus {
     PENDING = 0,
     ACCEPTED = 1,
 }
-
 
 export enum OTPStatus {
     UNUSED = 0,

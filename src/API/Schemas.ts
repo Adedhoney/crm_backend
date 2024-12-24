@@ -5,19 +5,15 @@ export const UserSchema = Joi.object({
     gender: Joi.number().required(),
     lastName: Joi.string().required(),
     password: Joi.string().required(),
-    middleName: Joi.string().optional(),
-    DOB: Joi.date().optional(),
-    phone: Joi.string().required(),
-    location: Joi.string().optional(),
 });
 export const UserUpdateSchema = Joi.object({
     firstName: Joi.string().required(),
     gender: Joi.number().required(),
     lastName: Joi.string().required(),
-    middleName: Joi.string().optional(),
+    middleName: Joi.string().allow('').optional(),
     DOB: Joi.date().optional(),
     phone: Joi.string().required(),
-    location: Joi.string().optional(),
+    location: Joi.string().allow('').optional(),
 });
 export const InviteSchema = Joi.object({
     userType: Joi.number().required(),
@@ -27,10 +23,6 @@ export const InviteSchema = Joi.object({
 export const LogInSchema = Joi.object({
     email: Joi.string().required(),
     password: Joi.string().required(),
-});
-export const UpdateInfoSchema = Joi.object({
-    firstName: Joi.string().optional(),
-    lastName: Joi.string().optional(),
 });
 export const UpdatePassWordSchema = Joi.object({
     password: Joi.string().required(),
@@ -47,25 +39,26 @@ export const ResetPasswordSchema = Joi.object({
 export const ClientSchema = Joi.object({
     name: Joi.string().required(),
     industry: Joi.string().required(),
-    email: Joi.string().optional(),
-    phone: Joi.string().optional(),
-    bankingDetails: Joi.string().optional(),
-    responsibleUserId: Joi.string().optional(),
+    email: Joi.string().allow('').optional(),
+    phone: Joi.string().allow('').optional(),
+    type: Joi.number().required(),
+    bankingDetails: Joi.string().allow('').optional(),
+    responsibleUserId: Joi.string().allow('').optional(),
 });
 
 export const ContactSchema = Joi.object({
-    clientId: Joi.string().optional(),
+    clientId: Joi.string().allow('').optional(),
     name: Joi.string().required(),
-    email: Joi.string().optional(),
-    phone: Joi.string().optional(),
-    role: Joi.string().optional(),
-    title: Joi.string().optional(),
-    responsibleUserId: Joi.string().optional(),
+    email: Joi.string().allow('').optional(),
+    phone: Joi.string().allow('').optional(),
+    role: Joi.string().allow('').optional(),
+    title: Joi.string().allow('').optional(),
+    responsibleUserId: Joi.string().allow('').optional(),
 });
 
 export const ReportSchema = Joi.object({
-    clientId: Joi.string().optional(),
-    contactId: Joi.string().optional(),
+    clientId: Joi.string().allow('').optional(),
+    contactId: Joi.string().allow('').optional(),
     title: Joi.string().required(),
     text: Joi.string().required(),
 });

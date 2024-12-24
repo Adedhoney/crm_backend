@@ -19,9 +19,9 @@ export interface User {
     middleName?: string;
     lastName: string;
     gender: Gender;
-    DOB: Date;
-    phone: string;
-    location: string;
+    DOB?: Date;
+    phone?: string;
+    location?: string;
     status: UserAccountStatus;
     userType: UserType;
     password?: string;

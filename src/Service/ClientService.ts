@@ -75,6 +75,7 @@ export class ClientService implements IClientService {
             logoUrl: logo?.location,
             email: data.email,
             phone: data.phone,
+            type: data.type,
             bankingDetails: data.bankingDetails,
             responsibleUserId: data.responsibleUserId || auth.userId,
             createdOn: date,
@@ -94,6 +95,9 @@ export class ClientService implements IClientService {
     }
     async GetClient(clientId: string): Promise<Client> {
         const client = await this.clientrepo.getClientById(clientId);
+        if (!client) {
+            throw new CustomError('Client not found', StatusCode.NOT_FOUND);
+        }
         return client;
     }
     async DeleteClient(clientId: string, auth: User): Promise<void> {
@@ -146,6 +150,7 @@ export class ClientService implements IClientService {
             logoUrl: client.logoUrl,
             email: data.email,
             phone: data.phone,
+            type: data.type,
             bankingDetails: data.bankingDetails,
             responsibleUserId: data.responsibleUserId,
             createdOn: client.createdOn,
@@ -172,6 +177,12 @@ export class ClientService implements IClientService {
         const client = await this.clientrepo.getClientById(clientId);
         if (!client) {
             throw new CustomError('Client not found', StatusCode.NOT_FOUND);
+        }
+        if (!logo) {
+            throw new CustomError(
+                'Image file is compulsory',
+                StatusCode.NOT_FOUND,
+            );
         }
 
         const date = getCurrentTimeStamp();

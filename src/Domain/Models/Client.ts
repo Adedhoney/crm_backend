@@ -12,6 +12,7 @@ import {
 } from 'sequelize-typescript';
 import { User, UserTable } from './User';
 import { ContactTable } from './Contact';
+import { ClientType } from '@domain/Enums';
 
 export interface Client {
     id?: number;
@@ -21,6 +22,7 @@ export interface Client {
     industry: string;
     email: string;
     phone: string;
+    type: ClientType;
     bankingDetails: string;
     responsibleUserId: string;
     createdOn?: number;
@@ -61,6 +63,9 @@ export class ClientTable extends Model implements Client {
     @Column({ type: DataType.STRING, allowNull: true })
     declare phone: string;
 
+    @Column({ type: DataType.TINYINT, allowNull: true })
+    declare type: ClientType;
+
     @Column({ type: DataType.STRING, allowNull: true })
     declare bankingDetails: string;
 
@@ -77,9 +82,17 @@ export class ClientTable extends Model implements Client {
     @Column({ type: DataType.BIGINT, allowNull: true })
     declare lastModifiedOn: number;
 
+    @ForeignKey(() => UserTable)
     @Column({ type: DataType.STRING, allowNull: true })
     declare createdBy: string;
 
+    @BelongsTo(() => UserTable, 'createdBy')
+    declare creator: UserTable;
+
+    @ForeignKey(() => UserTable)
     @Column({ type: DataType.STRING, allowNull: true })
     declare modifiedBy: string;
+
+    @BelongsTo(() => UserTable, 'modifiedBy')
+    declare modifier: UserTable;
 }
